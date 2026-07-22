@@ -8,6 +8,8 @@ export interface PackageItem {
   description: string | null;
   cost: number | null;
   image_url: string | null;
+  pickup_date: string | null; // "YYYY-MM-DD"
+  pickup_time: string | null; // "HH:MM"
   display_order: number;
   created_at: string;
 }

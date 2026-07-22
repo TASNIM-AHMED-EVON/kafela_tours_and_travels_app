@@ -8,6 +8,20 @@ import { createClient } from "@/lib/supabase/client";
 import { getCategory } from "@/lib/categories";
 import type { PackageItem } from "@/types/database";
 
+function formatPickup(date: string | null, time: string | null): string | null {
+  if (!date && !time) return null;
+  const parts: string[] = [];
+  if (date) {
+    const d = new Date(`${date}T00:00:00`);
+    parts.push(d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }));
+  }
+  if (time) {
+    const t = new Date(`2000-01-01T${time}`);
+    parts.push(t.toLocaleTimeString("bn-BD", { hour: "numeric", minute: "2-digit", hour12: true }));
+  }
+  return parts.join(" · ");
+}
+
 const EMPTY_FORM = {
   id: "" as string | null,
   title: "",
@@ -15,6 +29,8 @@ const EMPTY_FORM = {
   description: "",
   cost: "",
   image_url: "",
+  pickup_date: "",
+  pickup_time: "",
   display_order: "0",
 };
 
@@ -76,6 +92,8 @@ export default function AdminCategoryPage() {
       description: item.description ?? "",
       cost: item.cost !== null ? String(item.cost) : "",
       image_url: item.image_url ?? "",
+      pickup_date: item.pickup_date ?? "",
+      pickup_time: item.pickup_time ? item.pickup_time.slice(0, 5) : "",
       display_order: String(item.display_order ?? 0),
     });
     setImageFile(null);
@@ -125,6 +143,8 @@ export default function AdminCategoryPage() {
         description: form.description.trim() || null,
         cost: form.cost.trim() === "" ? null : Number(form.cost),
         image_url: imageUrl,
+        pickup_date: form.pickup_date || null,
+        pickup_time: form.pickup_time || null,
         display_order: Number(form.display_order) || 0,
       };
 
@@ -176,7 +196,7 @@ export default function AdminCategoryPage() {
         <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-semibold text-white/85">
-              {category.hasImage ? "প্যাকেজের নাম" : "বিশ্ববিদ্যালয়ের নাম"} *
+              {category.itemNounSingular}ের নাম *
             </label>
             <input
               required
@@ -207,6 +227,27 @@ export default function AdminCategoryPage() {
               placeholder="যেমন: 750 (খালি রাখলে 'যোগাযোগ করুন' দেখাবে)"
               className="w-full rounded-md border-2 border-white/15 bg-navy/50 px-4 py-2.5 text-sm text-white placeholder:text-white/35 outline-none focus:border-primary"
             />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-white/85">পিকআপ তারিখ</label>
+            <input
+              type="date"
+              value={form.pickup_date}
+              onChange={(e) => setForm({ ...form, pickup_date: e.target.value })}
+              className="w-full rounded-md border-2 border-white/15 bg-navy/50 px-4 py-2.5 text-sm text-white outline-none focus:border-primary [color-scheme:dark]"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-white/85">পিকআপ সময়</label>
+            <input
+              type="time"
+              value={form.pickup_time}
+              onChange={(e) => setForm({ ...form, pickup_time: e.target.value })}
+              className="w-full rounded-md border-2 border-white/15 bg-navy/50 px-4 py-2.5 text-sm text-white outline-none focus:border-primary [color-scheme:dark]"
+            />
+            <p className="mt-1 text-xs text-white/40">দুটোই ঐচ্ছিক — খালি রাখলে ওয়েবসাইটে দেখানো হবে না।</p>
           </div>
 
           {category.hasImage && (
@@ -309,6 +350,11 @@ export default function AdminCategoryPage() {
                       {item.location && <span>{item.location} · </span>}
                       {item.cost ? `${item.cost} টাকা` : "যোগাযোগ করুন"}
                     </p>
+                    {formatPickup(item.pickup_date, item.pickup_time) && (
+                      <p className="mt-0.5 flex items-center gap-1.5 text-xs text-primary">
+                        <i className="fa-solid fa-clock" /> {formatPickup(item.pickup_date, item.pickup_time)}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">

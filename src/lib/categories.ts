@@ -14,12 +14,16 @@ export interface CategoryConfig {
   shortLabel: string;
   icon: string; // Font Awesome class
   description: string;
-  /** Admission items are simple name/location/cost rows (no photo). Every other
-   *  package shows a photo card, so the admin form adds an image upload for them. */
+  /** Every package can now have a photo uploaded from the admin panel. */
   hasImage: boolean;
   itemNounSingular: string;
   /** Each package gets its own color identity across the site. */
   accent: AccentKey;
+  /** Wording for the booking button — admission is a bus seat, others are a call. */
+  ctaLabel: string;
+  ctaIcon: string;
+  /** Optional custom search placeholder; falls back to a generic one. */
+  searchPlaceholder?: string;
 }
 
 export const CATEGORIES: CategoryConfig[] = [
@@ -30,9 +34,12 @@ export const CATEGORIES: CategoryConfig[] = [
     icon: "fa-solid fa-graduation-cap",
     description:
       "বিভিন্ন বিশ্ববিদ্যালয়ের ভর্তি পরীক্ষার জন্য আমাদের রয়েছে স্পেশাল নিয়মিত বাস যাতায়াত এবং সম্পূর্ণ সেফ গাইড সার্ভিস।",
-    hasImage: false,
+    hasImage: true,
     itemNounSingular: "বিশ্ববিদ্যালয়",
     accent: "lagoon",
+    ctaLabel: "সিট বুক করুন",
+    ctaIcon: "fa-solid fa-bus",
+    searchPlaceholder: "বিশ্ববিদ্যালয়ের নাম বা লোকেশন লিখুন (যেমন: ঢাকা বিশ্ববিদ্যালয়, চুয়েট...)",
   },
   {
     slug: "group-tour",
@@ -44,6 +51,8 @@ export const CATEGORIES: CategoryConfig[] = [
     hasImage: true,
     itemNounSingular: "প্যাকেজ",
     accent: "marigold",
+    ctaLabel: "বুক করুন",
+    ctaIcon: "fa-solid fa-phone",
   },
   {
     slug: "study-tour",
@@ -55,6 +64,8 @@ export const CATEGORIES: CategoryConfig[] = [
     hasImage: true,
     itemNounSingular: "প্যাকেজ",
     accent: "vermillion",
+    ctaLabel: "বুক করুন",
+    ctaIcon: "fa-solid fa-phone",
   },
   {
     slug: "family-tour",
@@ -66,6 +77,8 @@ export const CATEGORIES: CategoryConfig[] = [
     hasImage: true,
     itemNounSingular: "প্যাকেজ",
     accent: "coral",
+    ctaLabel: "বুক করুন",
+    ctaIcon: "fa-solid fa-phone",
   },
   {
     slug: "corporate-tour",
@@ -77,6 +90,8 @@ export const CATEGORIES: CategoryConfig[] = [
     hasImage: true,
     itemNounSingular: "প্যাকেজ",
     accent: "iris",
+    ctaLabel: "বুক করুন",
+    ctaIcon: "fa-solid fa-phone",
   },
   {
     slug: "custom-tour",
@@ -88,6 +103,8 @@ export const CATEGORIES: CategoryConfig[] = [
     hasImage: true,
     itemNounSingular: "প্যাকেজ",
     accent: "meadow",
+    ctaLabel: "বুক করুন",
+    ctaIcon: "fa-solid fa-phone",
   },
 ];
 

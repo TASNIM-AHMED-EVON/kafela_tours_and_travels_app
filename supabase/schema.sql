@@ -1,6 +1,15 @@
 -- Kafela Tours & Travels - Supabase schema
 -- Run this once in the Supabase dashboard: SQL Editor -> New query -> paste -> Run.
 
+-- ============================================================================
+-- ALREADY SET UP YOUR DATABASE BEFORE? Run ONLY this block (SQL Editor -> New
+-- query -> paste just the 3 lines below -> Run), then skip to the bottom of
+-- this file. It safely adds the new columns without touching your existing data.
+-- ============================================================================
+-- alter table public.packages add column if not exists pickup_date date;
+-- alter table public.packages add column if not exists pickup_time time;
+-- ============================================================================
+
 -- 1. Table that holds every editable item for all 6 packages.
 --    "category" tells the app + admin panel which package the row belongs to:
 --    admission-search, group-tour, study-tour, family-tour, corporate-tour, custom-tour
@@ -21,6 +30,8 @@ create table if not exists public.packages (
   description text,
   cost numeric,
   image_url text,
+  pickup_date date,
+  pickup_time time,
   display_order integer not null default 0,
   created_at timestamptz not null default now()
 );
@@ -55,8 +66,7 @@ create policy "Authenticated can delete packages"
   to authenticated
   using (true);
 
--- 3. Storage bucket for the photos used on the 5 packages that show images
---    (every package except "ভর্তি পরীক্ষা প্যাকেজ", which is text-only).
+-- 3. Storage bucket for package photos (every package now supports an image).
 insert into storage.buckets (id, name, public)
 values ('package-images', 'package-images', true)
 on conflict (id) do nothing;

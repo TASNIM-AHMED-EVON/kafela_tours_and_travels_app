@@ -10,6 +10,20 @@ function formatCost(cost: number | null) {
   return `${cost} টাকা`;
 }
 
+function formatPickup(date: string | null, time: string | null): string | null {
+  if (!date && !time) return null;
+  const parts: string[] = [];
+  if (date) {
+    const d = new Date(`${date}T00:00:00`);
+    parts.push(d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }));
+  }
+  if (time) {
+    const t = new Date(`2000-01-01T${time}`);
+    parts.push(t.toLocaleTimeString("bn-BD", { hour: "numeric", minute: "2-digit", hour12: true }));
+  }
+  return parts.join(" · ");
+}
+
 export default function PackageGrid({
   category,
   items,
@@ -38,11 +52,7 @@ export default function PackageGrid({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={
-              category.hasImage
-                ? `${category.itemNounSingular} খুঁজুন...`
-                : "বিশ্ববিদ্যালয়ের নাম বা লোকেশন লিখুন (যেমন: ঢাকা বিশ্ববিদ্যালয়, চুয়েট...)"
-            }
+            placeholder={category.searchPlaceholder ?? `${category.itemNounSingular} খুঁজুন...`}
             className={`w-full rounded-pill border-2 border-white/15 bg-surface py-4 pl-14 pr-6 text-base text-white shadow-sm outline-none placeholder:text-white/40 transition focus:shadow-md ${accent.ring}`}
           />
           <i className={`fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 ${accent.text}`} />
@@ -67,77 +77,93 @@ export default function PackageGrid({
 
         {category.hasImage ? (
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((item) => (
-              <div
-                key={item.id}
-                className="group overflow-hidden rounded-2xl border border-white/10 bg-surface shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
-              >
-                <div className={`relative h-48 w-full ${accent.chipBg}`}>
-                  {item.image_url ? (
-                    <Image
-                      src={item.image_url}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className={`flex h-full items-center justify-center ${accent.text}`}>
-                      <i className={`${category.icon} text-5xl`} />
+            {filtered.map((item) => {
+              const pickup = formatPickup(item.pickup_date, item.pickup_time);
+              return (
+                <div
+                  key={item.id}
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-surface shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
+                >
+                  <div className={`relative h-48 w-full ${accent.chipBg}`}>
+                    {item.image_url ? (
+                      <Image
+                        src={item.image_url}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className={`flex h-full items-center justify-center ${accent.text}`}>
+                        <i className={`${category.icon} text-5xl`} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <h3 className="mb-2 font-display text-lg font-bold text-white">{item.title}</h3>
+                    {item.location && (
+                      <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
+                        <i className={`fa-solid fa-location-dot ${accent.text}`} /> {item.location}
+                      </p>
+                    )}
+                    {pickup && (
+                      <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
+                        <i className={`fa-solid fa-clock ${accent.text}`} /> {pickup}
+                      </p>
+                    )}
+                    {item.description && (
+                      <p className="mb-4 text-sm leading-relaxed text-white/70">{item.description}</p>
+                    )}
+                    <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                      <span className={`font-bold ${accent.text}`}>{formatCost(item.cost)}</span>
+                      <a
+                        href="tel:01918689484"
+                        className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition ${accent.solidBg} hover:opacity-90`}
+                      >
+                        <i className={category.ctaIcon} /> {category.ctaLabel}
+                      </a>
                     </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-2 font-display text-lg font-bold text-white">{item.title}</h3>
-                  {item.location && (
-                    <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
-                      <i className={`fa-solid fa-location-dot ${accent.text}`} /> {item.location}
-                    </p>
-                  )}
-                  {item.description && (
-                    <p className="mb-4 text-sm leading-relaxed text-white/70">{item.description}</p>
-                  )}
-                  <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                    <span className={`font-bold ${accent.text}`}>{formatCost(item.cost)}</span>
-                    <a
-                      href="tel:01918689484"
-                      className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition ${accent.solidBg} hover:opacity-90`}
-                    >
-                      <i className="fa-solid fa-phone" /> বুক করুন
-                    </a>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col justify-between rounded-xl border border-white/10 bg-surface p-7 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
-              >
-                <div>
-                  <h3 className="mb-2 font-display text-lg font-bold leading-snug text-white">
-                    {item.title}
-                  </h3>
-                  {item.location && (
-                    <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
-                      <i className={`fa-solid fa-location-dot ${accent.text}`} /> {item.location}
-                    </p>
-                  )}
-                  <p className="mb-6 flex items-center gap-2 text-sm text-white/55">
-                    <i className={`fa-solid fa-money-bill ${accent.text}`} /> {formatCost(item.cost)}
-                  </p>
-                </div>
-                <a
-                  href="tel:01918689484"
-                  className={`inline-flex items-center justify-center gap-2 rounded-md py-3 text-sm font-bold text-white transition ${accent.solidBg} hover:opacity-90`}
+            {filtered.map((item) => {
+              const pickup = formatPickup(item.pickup_date, item.pickup_time);
+              return (
+                <div
+                  key={item.id}
+                  className="flex flex-col justify-between rounded-xl border border-white/10 bg-surface p-7 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
                 >
-                  <i className="fa-solid fa-bus" /> সিট বুক করুন
-                </a>
-              </div>
-            ))}
+                  <div>
+                    <h3 className="mb-2 font-display text-lg font-bold leading-snug text-white">
+                      {item.title}
+                    </h3>
+                    {item.location && (
+                      <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
+                        <i className={`fa-solid fa-location-dot ${accent.text}`} /> {item.location}
+                      </p>
+                    )}
+                    {pickup && (
+                      <p className="mb-2 flex items-center gap-2 text-sm text-white/55">
+                        <i className={`fa-solid fa-clock ${accent.text}`} /> {pickup}
+                      </p>
+                    )}
+                    <p className="mb-6 flex items-center gap-2 text-sm text-white/55">
+                      <i className={`fa-solid fa-money-bill ${accent.text}`} /> {formatCost(item.cost)}
+                    </p>
+                  </div>
+                  <a
+                    href="tel:01918689484"
+                    className={`inline-flex items-center justify-center gap-2 rounded-md py-3 text-sm font-bold text-white transition ${accent.solidBg} hover:opacity-90`}
+                  >
+                    <i className={category.ctaIcon} /> {category.ctaLabel}
+                  </a>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
