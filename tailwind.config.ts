@@ -7,21 +7,21 @@ const config: Config = {
       colors: {
         // Core brand.
         primary: {
-          DEFAULT: "#F5A524", // marigold accent — pops against the dark theme
-          hover: "#C97F0E",
-          soft: "#FDF1DC",
+          DEFAULT: "#fb0202", // antique gold — premium, not bright yellow
+          hover: "#fb0202",
+          soft: "#F3E9CE",
         },
         dark: "#0A0A10", // near-black — header, footer, admin bar
         navy: "#101B3D", // deep blue — every page's main background
         surface: "#172652", // elevated card panels on top of navy
 
         // One distinct accent per package category.
-        lagoon: { DEFAULT: "#17A6A8", soft: "#E3F3F2" },
-        vermillion: { DEFAULT: "#F0603E", soft: "#FCE7E1" },
-        coral: { DEFAULT: "#F5748C", soft: "#FDEAEE" },
-        iris: { DEFAULT: "#8B7AE0", soft: "#EAE6F7" },
-        meadow: { DEFAULT: "#4FB454", soft: "#E7F3E7" },
-        marigold: { DEFAULT: "#F5A524", soft: "#FDF1DC" },
+        lagoon: { DEFAULT: "#17A6A8", soft: "#94eb87" },
+        vermillion: { DEFAULT: "#f1441d", soft: "#94eb87" },
+        coral: { DEFAULT: "#F5748C", soft: "#94eb87" },
+        iris: { DEFAULT: "#8B7AE0", soft: "#94eb87" },
+        meadow: { DEFAULT: "#00ff0d", soft: "#daead7" },
+        marigold: { DEFAULT: "#3041c5", soft: "#94eb87" }, // warm bronze-amber, distinct from primary
       },
       fontFamily: {
         sans: ["'Hind Siliguri'", "'Poppins'", "sans-serif"],

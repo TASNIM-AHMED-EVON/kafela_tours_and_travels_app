@@ -28,8 +28,8 @@ body {
   transform: translateX(-50%);
   background-image: repeating-linear-gradient(
     to bottom,
-    #bd2525 0,
-    #bd2525 10px,
+    #1cec29 0,
+    #1cec29 10px,
     transparent 10px,
     transparent 20px
   );
@@ -40,8 +40,8 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 9999px;
-  background: #bd2525;
-  box-shadow: 0 0 0 6px #101b3d, 0 0 0 8px #f5a52440;
+  background: #1cec29;
+  box-shadow: 0 0 0 6px #101b3d, 0 0 0 8px #c9a22740;
 }
 
 @media (prefers-reduced-motion: no-preference) {
