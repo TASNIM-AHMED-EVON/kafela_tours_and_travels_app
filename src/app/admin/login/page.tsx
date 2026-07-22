@@ -42,10 +42,14 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-[85vh] items-center justify-center px-5 py-12">
-      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-surface p-9 shadow-xl shadow-black/30">
+    <div className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-5 py-12">
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="animate-blob-drift absolute -left-24 top-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="animate-blob-drift-slow absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-iris/10 blur-3xl" />
+      </div>
+      <div className="glass-panel relative w-full max-w-sm rounded-2xl p-9 shadow-premium">
         <div className="mb-5 flex justify-center">
-          <span className="rounded-md bg-primary px-5 py-2 font-display text-2xl font-bold text-dark">
+          <span className="rounded-md bg-gold-gradient px-5 py-2 font-display text-2xl font-bold text-dark shadow-gold-glow">
             কাফেলা
           </span>
         </div>
@@ -89,7 +93,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-primary py-3 font-bold text-white transition hover:bg-primary-hover disabled:opacity-60"
+            className="w-full rounded-md bg-gold-gradient py-3 font-bold text-dark shadow-gold-glow transition hover:brightness-110 disabled:opacity-60"
           >
             {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
           </button>

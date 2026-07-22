@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <section className="relative overflow-hidden bg-dark px-5 pb-8 pt-16 text-white">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-lagoon via-primary to-vermillion" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] animate-shimmer bg-gold-gradient bg-[length:250%_100%]" />
       <div className="mx-auto grid max-w-6xl gap-10 border-b border-white/10 pb-10 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <h3 className="relative mb-6 pb-2 font-display text-xl font-bold after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-10 after:bg-primary">

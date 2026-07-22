@@ -8,13 +8,36 @@ html {
 
 body {
   color: #eef1fb;
-  background-color: #101b3d;
+  background-color: #0d1730;
 }
 
-/* Subtle dot texture for the dark navy sections, so it never reads as flat. */
+/* Subtle dot texture so dark sections never read as flat. */
 .pattern-dots {
   background-image: radial-gradient(#ffffff14 1.4px, transparent 1.4px);
   background-size: 22px 22px;
+}
+
+/* Frosted "liquid glass" panel — translucent, blurred, gold-hairline edge. */
+.glass-panel {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(203, 161, 53, 0.18);
+}
+
+/* Gold shimmer sweep, layered behind text/buttons for a metallic sheen. */
+.gold-shimmer-text {
+  background: linear-gradient(110deg, #8a6a1e 20%, #e8cd7a 45%, #cba135 55%, #8a6a1e 80%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gold-shimmer-text {
+    animation: shimmer-sweep 5s ease-in-out infinite;
+  }
 }
 
 /* The route line: a literal caravan route running through the homepage,
@@ -28,8 +51,8 @@ body {
   transform: translateX(-50%);
   background-image: repeating-linear-gradient(
     to bottom,
-    #1cec29 0,
-    #1cec29 10px,
+    #cba135 0,
+    #cba135 10px,
     transparent 10px,
     transparent 20px
   );
@@ -40,8 +63,17 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 9999px;
-  background: #1cec29;
-  box-shadow: 0 0 0 6px #101b3d, 0 0 0 8px #c9a22740;
+  background: #cba135;
+  box-shadow: 0 0 0 6px #0d1730, 0 0 0 8px #cba13540, 0 0 24px 2px #cba13555;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

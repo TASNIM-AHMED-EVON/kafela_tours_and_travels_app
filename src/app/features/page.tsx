@@ -1,5 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
+import TiltCard from "@/components/TiltCard";
+import LiquidBlobs from "@/components/LiquidBlobs";
 import { ACCENT_CLASSES, type AccentKey } from "@/lib/categories";
 
 const ACCENT_ORDER: AccentKey[] = ["lagoon", "marigold", "vermillion", "coral", "iris", "meadow"];
@@ -43,37 +46,43 @@ export default function FeaturesPage() {
   return (
     <>
       <Navbar />
-      <section className="pattern-dots bg-navy px-5 pb-20 pt-48">
-        <h2 className="mb-4 text-center font-display text-3xl font-bold text-white sm:text-4xl">
-          আমাদের সেবাসমূহের বৈশিষ্ট্য
-        </h2>
-        <p className="mx-auto mb-14 max-w-xl text-center text-white/60">
-          যাত্রীদের নিখুঁত ভ্রমণ অভিজ্ঞতা এবং সর্বোচ্চ সন্তুষ্টি নিশ্চিত করতে আমরা সর্বদা সেরা মানের
-          সেবা প্রদান করি।
-        </p>
+      <section className="pattern-dots relative overflow-hidden bg-navy px-5 pb-20 pt-48">
+        <LiquidBlobs variant="gold" />
+        <div className="relative">
+          <Reveal>
+            <h2 className="mb-4 text-center font-display text-3xl font-bold text-white sm:text-4xl">
+              আমাদের সেবাসমূহের বৈশিষ্ট্য
+            </h2>
+            <p className="mx-auto mb-14 max-w-xl text-center text-white/60">
+              যাত্রীদের নিখুঁত ভ্রমণ অভিজ্ঞতা এবং সর্বোচ্চ সন্তুষ্টি নিশ্চিত করতে আমরা সর্বদা সেরা মানের
+              সেবা প্রদান করি।
+            </p>
+          </Reveal>
 
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2">
-          {FEATURES.map((f, i) => {
-            const accent = ACCENT_CLASSES[ACCENT_ORDER[i % ACCENT_ORDER.length]];
-            return (
-              <div
-                key={f.title}
-                className="flex gap-5 rounded-2xl border border-white/10 bg-surface p-7 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
-              >
-                <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl ${accent.chipBg} ${accent.text}`}>
-                  <i className={f.icon} />
-                </div>
-                <div>
-                  <h4 className="mb-2 font-display text-lg font-bold text-white">{f.title}</h4>
-                  {f.points.map((p) => (
-                    <p key={p} className="text-sm leading-relaxed text-white/70">
-                      {p}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2">
+            {FEATURES.map((f, i) => {
+              const accent = ACCENT_CLASSES[ACCENT_ORDER[i % ACCENT_ORDER.length]];
+              return (
+                <Reveal key={f.title} delay={(i % 2) * 0.1}>
+                  <TiltCard className="h-full">
+                    <div className="flex h-full gap-5 rounded-2xl border border-white/10 bg-surface p-7 shadow-premium transition hover:border-primary/25">
+                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl ${accent.chipBg} ${accent.text}`}>
+                        <i className={f.icon} />
+                      </div>
+                      <div>
+                        <h4 className="mb-2 font-display text-lg font-bold text-white">{f.title}</h4>
+                        {f.points.map((p) => (
+                          <p key={p} className="text-sm leading-relaxed text-white/70">
+                            {p}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </TiltCard>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
       </section>
       <Footer />

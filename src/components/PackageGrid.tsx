@@ -48,12 +48,12 @@ export default function PackageGrid({
   return (
     <>
       <div className="mx-auto max-w-xl px-5 pt-10">
-        <div className="relative">
+        <div className="glass-panel relative rounded-pill shadow-premium">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={category.searchPlaceholder ?? `${category.itemNounSingular} খুঁজুন...`}
-            className={`w-full rounded-pill border-2 border-white/15 bg-surface py-4 pl-14 pr-6 text-base text-white shadow-sm outline-none placeholder:text-white/40 transition focus:shadow-md ${accent.ring}`}
+            className={`w-full rounded-pill bg-transparent py-4 pl-14 pr-6 text-base text-white outline-none placeholder:text-white/40`}
           />
           <i className={`fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 ${accent.text}`} />
         </div>
@@ -77,12 +77,13 @@ export default function PackageGrid({
 
         {category.hasImage ? (
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((item) => {
+            {filtered.map((item, i) => {
               const pickup = formatPickup(item.pickup_date, item.pickup_time);
               return (
                 <div
                   key={item.id}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-surface shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
+                  style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+                  className="animate-fade-up group overflow-hidden rounded-2xl border border-white/10 bg-surface shadow-premium transition duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-gold-glow"
                 >
                   <div className={`relative h-48 w-full ${accent.chipBg}`}>
                     {item.image_url ? (
@@ -91,13 +92,14 @@ export default function PackageGrid({
                         alt={item.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover transition duration-300 group-hover:scale-105"
+                        className="object-cover transition duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div className={`flex h-full items-center justify-center ${accent.text}`}>
                         <i className={`${category.icon} text-5xl`} />
                       </div>
                     )}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/90 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
                   <div className="p-6">
                     <h3 className="mb-2 font-display text-lg font-bold text-white">{item.title}</h3>
@@ -130,12 +132,13 @@ export default function PackageGrid({
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((item) => {
+            {filtered.map((item, i) => {
               const pickup = formatPickup(item.pickup_date, item.pickup_time);
               return (
                 <div
                   key={item.id}
-                  className="flex flex-col justify-between rounded-xl border border-white/10 bg-surface p-7 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
+                  style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+                  className="animate-fade-up flex flex-col justify-between rounded-xl border border-white/10 bg-surface p-7 shadow-premium transition duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-gold-glow"
                 >
                   <div>
                     <h3 className="mb-2 font-display text-lg font-bold leading-snug text-white">

@@ -187,7 +187,7 @@ export default function AdminCategoryPage() {
       )}
 
       {/* Add / Edit form */}
-      <div className="mb-10 rounded-2xl border border-white/10 bg-surface p-6 shadow-lg shadow-black/20 sm:p-8">
+      <div className="mb-10 rounded-2xl border border-white/10 bg-surface p-6 shadow-premium sm:p-8">
         <h2 className="mb-5 flex items-center gap-2 font-display text-lg font-bold text-white">
           <i className="fa-solid fa-circle-plus text-primary" />
           {form.id ? `${category.itemNounSingular} এডিট করুন` : `নতুন ${category.itemNounSingular} যোগ করুন`}
@@ -301,7 +301,7 @@ export default function AdminCategoryPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-md bg-primary px-6 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover disabled:opacity-60"
+              className="rounded-md bg-gold-gradient px-6 py-2.5 text-sm font-bold text-dark shadow-gold-glow transition hover:brightness-110 disabled:opacity-60"
             >
               {saving ? "সংরক্ষণ হচ্ছে..." : form.id ? "আপডেট করুন" : "যোগ করুন"}
             </button>
@@ -319,7 +319,7 @@ export default function AdminCategoryPage() {
       </div>
 
       {/* List */}
-      <div className="rounded-2xl border border-white/10 bg-surface p-6 shadow-lg shadow-black/20 sm:p-8">
+      <div className="rounded-2xl border border-white/10 bg-surface p-6 shadow-premium sm:p-8">
         <h2 className="mb-5 font-display text-lg font-bold text-white">তালিকা ({items.length})</h2>
 
         {loading && <p className="py-8 text-center text-white/40">লোড হচ্ছে...</p>}
