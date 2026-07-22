@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #eef1fb;
+  background-color: #101b3d;
+}
+
+/* Subtle dot texture for the dark navy sections, so it never reads as flat. */
+.pattern-dots {
+  background-image: radial-gradient(#ffffff14 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+
+/* The route line: a literal caravan route running through the homepage,
+   connecting each section the way waypoints connect a journey. */
+.route-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #bd2525 0,
+    #bd2525 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.route-dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #bd2525;
+  box-shadow: 0 0 0 6px #101b3d, 0 0 0 8px #f5a52440;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caravan-drift {
+    animation: caravan-drift 22s linear infinite;
+  }
+}
+
+@keyframes caravan-drift {
+  0% {
+    transform: translateX(-6%);
+  }
+  50% {
+    transform: translateX(6%);
+  }
+  100% {
+    transform: translateX(-6%);
+  }
+}
