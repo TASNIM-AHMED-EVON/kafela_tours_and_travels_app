@@ -111,7 +111,7 @@ export default function HomePage() {
             {WHY_US.map((item, i) => (
               <Reveal key={item.title} delay={i * 0.1}>
                 <TiltCard className="h-full">
-                  <div className="group h-full rounded-2xl border border-white/10 bg-surface p-9 text-center shadow-premium transition hover:border-primary/25">
+                  <div className="animated-border group h-full rounded-2xl border border-white/10 bg-surface p-9 text-center shadow-premium transition hover:border-primary/25">
                     <div
                       className={`mx-auto mb-6 flex h-[75px] w-[75px] items-center justify-center rounded-full text-3xl transition ${item.chip} ${item.hoverChip}`}
                     >
