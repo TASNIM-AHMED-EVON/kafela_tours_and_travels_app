@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORIES, ACCENT_CLASSES } from "@/lib/categories";
 import TiltCard from "@/components/TiltCard";
@@ -7,6 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
+
+  // Don't rely on middleware alone to gate this page — check again here,
+  // directly in the page's own server render, as a second independent layer.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/admin/login");
+
   const { data } = await supabase.from("packages").select("category");
 
   const counts = new Map<string, number>();
