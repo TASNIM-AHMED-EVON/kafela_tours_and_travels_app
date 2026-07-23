@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,6 +21,8 @@ function formatPickup(date: string | null, time: string | null): string | null {
   }
   return parts.join(" · ");
 }
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 
 const EMPTY_FORM = {
   id: "" as string | null,
@@ -43,6 +45,19 @@ export default function AdminCategoryPage() {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(EMPTY_FORM);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  // Recreating an object URL on every render would leak memory, so we only
+  // make a new one when the file actually changes, and clean up the old one.
+  const imagePreviewUrl = useMemo(
+    () => (imageFile ? URL.createObjectURL(imageFile) : null),
+    [imageFile]
+  );
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    };
+  }, [imagePreviewUrl]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
 
@@ -82,6 +97,7 @@ export default function AdminCategoryPage() {
   function resetForm() {
     setForm(EMPTY_FORM);
     setImageFile(null);
+    setImageError(null);
   }
 
   function editItem(item: PackageItem) {
@@ -97,6 +113,7 @@ export default function AdminCategoryPage() {
       display_order: String(item.display_order ?? 0),
     });
     setImageFile(null);
+    setImageError(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -269,13 +286,24 @@ export default function AdminCategoryPage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  if (file && file.size > MAX_IMAGE_BYTES) {
+                    setImageError("ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না। অনুগ্রহ করে ছোট সাইজের ছবি বেছে নিন।");
+                    setImageFile(null);
+                    e.target.value = "";
+                    return;
+                  }
+                  setImageError(null);
+                  setImageFile(file);
+                }}
                 className="block w-full text-sm text-white/60 file:mr-4 file:rounded-md file:border-0 file:bg-primary/20 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/30"
               />
+              {imageError && <p className="mt-2 text-xs text-vermillion">{imageError}</p>}
               {(imageFile || form.image_url) && (
                 <div className="relative mt-3 h-32 w-48 overflow-hidden rounded-md border border-white/15">
                   <Image
-                    src={imageFile ? URL.createObjectURL(imageFile) : form.image_url}
+                    src={imagePreviewUrl ?? form.image_url}
                     alt="preview"
                     fill
                     unoptimized

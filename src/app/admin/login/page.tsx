@@ -36,7 +36,8 @@ function LoginForm() {
       return;
     }
 
-    const next = searchParams.get("next") || "/admin/dashboard";
+    const requested = searchParams.get("next");
+    const next = requested && requested.startsWith("/admin") ? requested : "/admin/dashboard";
     router.push(next);
     router.refresh();
   }
