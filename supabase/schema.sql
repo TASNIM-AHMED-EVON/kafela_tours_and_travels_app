@@ -23,48 +23,93 @@ create table if not exists public.admins (
 alter table public.admins enable row level security;
 revoke all on public.admins from anon, authenticated;
 
+-- A SECURITY DEFINER function lets policies check admin status internally
+-- (with elevated privileges) without granting direct table access to
+-- `authenticated` — direct access would let any logged-in user list who
+-- the admins are, which is what `revoke all` above is meant to prevent.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
+
 drop policy if exists "Authenticated can insert packages" on public.packages;
 drop policy if exists "Admins can insert packages" on public.packages;
 create policy "Admins can insert packages"
   on public.packages for insert
   to authenticated
-  with check (exists (select 1 from public.admins where user_id = auth.uid()));
+  with check (public.is_admin());
 
 drop policy if exists "Authenticated can update packages" on public.packages;
 drop policy if exists "Admins can update packages" on public.packages;
 create policy "Admins can update packages"
   on public.packages for update
   to authenticated
-  using (exists (select 1 from public.admins where user_id = auth.uid()))
-  with check (exists (select 1 from public.admins where user_id = auth.uid()));
+  using (public.is_admin())
+  with check (public.is_admin());
 
 drop policy if exists "Authenticated can delete packages" on public.packages;
 drop policy if exists "Admins can delete packages" on public.packages;
 create policy "Admins can delete packages"
   on public.packages for delete
   to authenticated
-  using (exists (select 1 from public.admins where user_id = auth.uid()));
+  using (public.is_admin());
 
 drop policy if exists "Authenticated can upload package images" on storage.objects;
 drop policy if exists "Admins can upload package images" on storage.objects;
 create policy "Admins can upload package images"
   on storage.objects for insert
   to authenticated
-  with check (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  with check (bucket_id = 'package-images' and public.is_admin());
 
 drop policy if exists "Authenticated can update package images" on storage.objects;
 drop policy if exists "Admins can update package images" on storage.objects;
 create policy "Admins can update package images"
   on storage.objects for update
   to authenticated
-  using (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  using (bucket_id = 'package-images' and public.is_admin());
 
 drop policy if exists "Authenticated can delete package images" on storage.objects;
 drop policy if exists "Admins can delete package images" on storage.objects;
 create policy "Admins can delete package images"
   on storage.objects for delete
   to authenticated
-  using (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  using (bucket_id = 'package-images' and public.is_admin());
+*/
+
+-- ALREADY RAN THE OLDER VERSION OF THE SECURITY UPGRADE ABOVE (the one
+-- without is_admin())? You'll see "permission denied for table admins"
+-- when saving. Run ONLY this small block to fix it — it's the same fix
+-- as above, just isolated so you don't have to redo everything:
+/*
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
+
+drop policy if exists "Admins can insert packages" on public.packages;
+create policy "Admins can insert packages" on public.packages for insert to authenticated with check (public.is_admin());
+drop policy if exists "Admins can update packages" on public.packages;
+create policy "Admins can update packages" on public.packages for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admins can delete packages" on public.packages;
+create policy "Admins can delete packages" on public.packages for delete to authenticated using (public.is_admin());
+drop policy if exists "Admins can upload package images" on storage.objects;
+create policy "Admins can upload package images" on storage.objects for insert to authenticated with check (bucket_id = 'package-images' and public.is_admin());
+drop policy if exists "Admins can update package images" on storage.objects;
+create policy "Admins can update package images" on storage.objects for update to authenticated using (bucket_id = 'package-images' and public.is_admin());
+drop policy if exists "Admins can delete package images" on storage.objects;
+create policy "Admins can delete package images" on storage.objects for delete to authenticated using (bucket_id = 'package-images' and public.is_admin());
 */
 -- ============================================================================
 
@@ -105,9 +150,24 @@ create table if not exists public.admins (
 );
 
 alter table public.admins enable row level security;
--- Nobody needs to read/write this table from the browser; the server-side
--- RLS checks below reference it internally, that's all.
+-- Nobody needs to query this table directly from the browser.
 revoke all on public.admins from anon, authenticated;
+
+-- A SECURITY DEFINER function lets the policies below check admin status
+-- internally (with elevated privileges) without granting `authenticated`
+-- direct SELECT on `admins` — direct access would let any logged-in user
+-- list who the admins are, which the revoke above is meant to prevent.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
 
 -- 3. Row Level Security: anyone can read (so the public website can show the
 --    lists), but only accounts listed in `admins` can add/edit/delete.
@@ -122,20 +182,20 @@ drop policy if exists "Admins can insert packages" on public.packages;
 create policy "Admins can insert packages"
   on public.packages for insert
   to authenticated
-  with check (exists (select 1 from public.admins where user_id = auth.uid()));
+  with check (public.is_admin());
 
 drop policy if exists "Admins can update packages" on public.packages;
 create policy "Admins can update packages"
   on public.packages for update
   to authenticated
-  using (exists (select 1 from public.admins where user_id = auth.uid()))
-  with check (exists (select 1 from public.admins where user_id = auth.uid()));
+  using (public.is_admin())
+  with check (public.is_admin());
 
 drop policy if exists "Admins can delete packages" on public.packages;
 create policy "Admins can delete packages"
   on public.packages for delete
   to authenticated
-  using (exists (select 1 from public.admins where user_id = auth.uid()));
+  using (public.is_admin());
 
 -- 4. Storage bucket for package photos (every package now supports an image).
 insert into storage.buckets (id, name, public)
@@ -151,19 +211,19 @@ drop policy if exists "Admins can upload package images" on storage.objects;
 create policy "Admins can upload package images"
   on storage.objects for insert
   to authenticated
-  with check (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  with check (bucket_id = 'package-images' and public.is_admin());
 
 drop policy if exists "Admins can update package images" on storage.objects;
 create policy "Admins can update package images"
   on storage.objects for update
   to authenticated
-  using (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  using (bucket_id = 'package-images' and public.is_admin());
 
 drop policy if exists "Admins can delete package images" on storage.objects;
 create policy "Admins can delete package images"
   on storage.objects for delete
   to authenticated
-  using (bucket_id = 'package-images' and exists (select 1 from public.admins where user_id = auth.uid()));
+  using (bucket_id = 'package-images' and public.is_admin());
 
 -- ============================================================================
 -- IMPORTANT SECURITY STEP - do this after running the schema above, and
