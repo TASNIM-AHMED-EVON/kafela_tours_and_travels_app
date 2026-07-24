@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import TiltCard from "@/components/TiltCard";
 import LiquidBlobs from "@/components/LiquidBlobs";
+import WhyUsCarousel from "@/components/WhyUsCarousel";
 
 const WHY_US = [
   {
@@ -11,21 +12,18 @@ const WHY_US = [
     title: "নিরাপদ ভ্রমণ",
     text: "অভিজ্ঞ চালক, ফিটনেসযুক্ত গাড়ি এবং সার্বক্ষণিক ট্র্যাকিং ব্যবস্থার মাধ্যমে আমরা নিশ্চিত করি আপনার সম্পূর্ণ নিরাপদ যাত্রা।",
     chip: "bg-lagoon/15 text-lagoon",
-    hoverChip: "group-hover:bg-lagoon group-hover:text-white",
   },
   {
     icon: "fa-solid fa-hotel",
     title: "প্রিমিয়াম আবাসন",
     text: "আপনার বাজেটের মধ্যে আরামদায়ক ও মানসম্মত হোটেল-রিসোর্ট বুকিং নিশ্চিত করি প্রতিটি ট্যুরে।",
     chip: "bg-primary/15 text-primary",
-    hoverChip: "group-hover:bg-primary group-hover:text-dark",
   },
   {
     icon: "fa-solid fa-headset",
     title: "২৪/৭ কাস্টমার সাপোর্ট",
     text: "যেকোনো প্রয়োজনে যাত্রার আগে, চলাকালীন এবং পরে আমাদের টিম সবসময় আপনার পাশে আছে।",
     chip: "bg-vermillion/15 text-vermillion",
-    hoverChip: "group-hover:bg-vermillion group-hover:text-white",
   },
 ];
 
@@ -96,8 +94,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WHY US — first waypoint on the route line. */}
-      <section className="pattern-dots relative bg-navy px-5 py-20">
+      {/* WHY US — first waypoint on the route line, now a 3D draggable carousel. */}
+      <section className="pattern-dots relative overflow-hidden bg-navy px-5 py-20">
         <div className="relative mx-auto max-w-6xl">
           <Reveal>
             <div className="mb-14 flex flex-col items-center">
@@ -105,25 +103,14 @@ export default function HomePage() {
               <h2 className="text-center font-display text-3xl font-bold text-white">
                 কেন আমাদের বেছে নেবেন?
               </h2>
+              <p className="mt-2 text-sm text-white/40">
+                <i className="fa-solid fa-hand-pointer mr-1" /> কার্ডগুলো টেনে ঘোরান বা তীর চিহ্নে ক্লিক করুন
+              </p>
             </div>
           </Reveal>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {WHY_US.map((item, i) => (
-              <Reveal key={item.title} delay={i * 0.1}>
-                <TiltCard className="h-full">
-                  <div className="animated-border group h-full rounded-2xl border border-white/10 bg-surface p-9 text-center shadow-premium transition hover:border-primary/25">
-                    <div
-                      className={`mx-auto mb-6 flex h-[75px] w-[75px] items-center justify-center rounded-full text-3xl transition ${item.chip} ${item.hoverChip}`}
-                    >
-                      <i className={item.icon} />
-                    </div>
-                    <h3 className="mb-3 font-display text-xl font-bold text-white">{item.title}</h3>
-                    <p className="text-sm leading-relaxed text-white/60">{item.text}</p>
-                  </div>
-                </TiltCard>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal delay={0.1}>
+            <WhyUsCarousel items={WHY_US} />
+          </Reveal>
         </div>
       </section>
 
