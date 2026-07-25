@@ -46,20 +46,25 @@ export default function Navbar() {
             open ? "block" : "hidden"
           } absolute left-0 top-full w-full border-t border-white/10 bg-dark/95 px-5 py-4 shadow-lg backdrop-blur-xl md:static md:block md:w-auto md:border-0 md:bg-transparent md:p-0 md:shadow-none`}
         >
-          <ul className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
-            {LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={`text-[15px] font-semibold transition hover:text-primary ${
-                    pathname === link.href ? "text-primary" : "text-white/85"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+          <ul className="flex flex-col gap-2 md:flex-row md:items-center md:gap-2">
+            {LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={`block rounded-pill px-4 py-2 text-[15px] font-semibold transition ${
+                      isActive
+                        ? "bg-primary/15 text-primary shadow-gold-glow"
+                        : "text-white/85 hover:bg-primary/10 hover:text-primary hover:shadow-gold-glow"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 

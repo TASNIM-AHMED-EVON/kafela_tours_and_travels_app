@@ -40,7 +40,7 @@ const WHY_US = [
   {
     icon: "fa-solid fa-route",
     title: "সব ধরনের ভ্রমণ, এক জায়গায়",
-    text: "ভর্তি পরীক্ষা থেকে কর্পোরেট ট্যুর পর্যন্ত — ৬ ধরনের প্যাকেজ নিয়ে আমরা আপনার প্রতিটি ভ্রমণের চাহিদা পূরণ করি।",
+    text: "ভর্তি পরীক্ষা থেকে কর্পোরেট ট্যুর — ৬ ধরনের প্যাকেজ নিয়ে আমরা আপনার প্রতিটি ভ্রমণের চাহিদা পূরণ করি।",
     chip: "bg-coral/15 text-coral",
   },
 ];
@@ -121,9 +121,6 @@ export default function HomePage() {
               <h2 className="text-center font-display text-3xl font-bold text-white">
                 কেন আমাদের বেছে নেবেন?
               </h2>
-              <p className="mt-2 text-sm text-white/40">
-                <i className="fa-solid fa-hand-pointer mr-1" /> কার্ডগুলো টেনে ঘোরান বা তীর চিহ্নে ক্লিক করুন
-              </p>
             </div>
           </Reveal>
           <Reveal delay={0.1}>

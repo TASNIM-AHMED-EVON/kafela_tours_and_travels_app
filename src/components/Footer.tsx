@@ -91,15 +91,18 @@ export default function Footer() {
           <h3 className="relative mb-6 pb-2 font-display text-lg font-bold after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-10 after:bg-primary">
             নীতিমালা
           </h3>
-          <ul className="space-y-3 text-sm text-gray-300">
+          <div className="flex flex-col gap-3">
             {LEGAL_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className="inline-flex items-center gap-2 transition hover:text-primary">
-                  <i className="fa-solid fa-angle-right text-xs text-primary" /> {link.label}
-                </Link>
-              </li>
+              <Link
+                key={link.href}
+                href={link.href}
+                className="group flex items-center justify-between rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-gray-200 transition hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+              >
+                <span>{link.label}</span>
+                <i className="fa-solid fa-angle-right text-xs text-primary transition group-hover:translate-x-0.5" />
+              </Link>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
 

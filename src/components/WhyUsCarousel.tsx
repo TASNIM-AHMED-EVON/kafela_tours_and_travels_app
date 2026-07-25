@@ -165,41 +165,6 @@ export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
           })}
         </div>
       </div>
-
-      <div className="mt-8 flex items-center justify-center gap-5">
-        <button
-          type="button"
-          onClick={prev}
-          aria-label="পূর্ববর্তী"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-surface text-primary shadow-gold-glow transition hover:-translate-y-0.5 hover:bg-primary hover:text-dark"
-        >
-          <i className="fa-solid fa-chevron-left" />
-        </button>
-        <div className="flex items-center gap-2">
-          {items.map((item, i) => (
-            <button
-              key={item.title}
-              type="button"
-              aria-label={item.title}
-              onClick={() => {
-                thetaRef.current = -angleStep * i;
-                applyRotation(true);
-              }}
-              className={`h-2 rounded-full transition-all ${
-                i === current ? "w-6 bg-primary" : "w-2 bg-white/20 hover:bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={next}
-          aria-label="পরবর্তী"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-surface text-primary shadow-gold-glow transition hover:-translate-y-0.5 hover:bg-primary hover:text-dark"
-        >
-          <i className="fa-solid fa-chevron-right" />
-        </button>
-      </div>
     </div>
   );
 }
