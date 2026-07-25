@@ -17,12 +17,39 @@ body {
   background-size: 22px 22px;
 }
 
-/* Frosted "liquid glass" panel — translucent, blurred, gold-hairline edge. */
+/* Frosted "liquid glass" panel — translucent, blurred, gold-hairline edge.
+   Used for smaller UI elements (buttons, small cards). */
 .glass-panel {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid rgba(203, 161, 53, 0.18);
+}
+
+/* A more pronounced glass treatment for the carousel cards — stronger blur
+   and saturation plus a subtle top-edge light reflection, so it reads
+   clearly as "glass" even against a flat background. */
+.carousel-glass {
+  background: linear-gradient(165deg, rgba(34, 52, 108, 0.55) 0%, rgba(8, 12, 28, 0.4) 100%);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  overflow: hidden;
+}
+
+.carousel-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+.carousel-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 60% at 15% 0%, rgba(232, 205, 122, 0.12), transparent 60%);
+  pointer-events: none;
 }
 
 /* Gold shimmer sweep, layered behind text/buttons for a metallic sheen. */

@@ -136,9 +136,7 @@ export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
             return (
               <div
                 key={item.title}
-                className={`absolute left-0 top-0 rounded-2xl border p-8 text-center shadow-premium transition-colors duration-500 ${
-                  isActive ? "border-primary/30 bg-surface" : "border-white/10 bg-surface/80"
-                }`}
+                className="carousel-glass absolute left-0 top-0 rounded-2xl border p-8 text-center shadow-premium transition-all duration-500"
                 style={{
                   width: dims.cardW,
                   height: dims.cardH,
@@ -146,15 +144,22 @@ export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
                   transform: `rotateY(${cardAngle}deg) translateZ(${dims.radius}px)`,
                   backfaceVisibility: "hidden",
                   pointerEvents: isActive ? "auto" : "none",
+                  borderColor: isActive ? "rgba(232, 205, 122, 0.6)" : "rgba(255, 255, 255, 0.14)",
+                  opacity: isActive ? 1 : 0.65,
+                  boxShadow: isActive
+                    ? "0 20px 60px -15px rgba(0,0,0,0.55), 0 0 45px -6px rgba(203,161,53,0.4)"
+                    : undefined,
                 }}
               >
                 <div
-                  className={`mx-auto mb-6 flex h-[75px] w-[75px] items-center justify-center rounded-full text-3xl transition ${item.chip}`}
+                  className={`relative z-10 mx-auto mb-6 flex h-[75px] w-[75px] items-center justify-center rounded-full text-3xl transition ${item.chip}`}
                 >
                   <i className={item.icon} />
                 </div>
-                <h3 className="mb-3 font-display text-xl font-bold text-white">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-white/60">{item.text}</p>
+                <h3 className="relative z-10 mb-3 font-display text-xl font-bold text-white">
+                  {item.title}
+                </h3>
+                <p className="relative z-10 text-sm leading-relaxed text-white/60">{item.text}</p>
               </div>
             );
           })}
