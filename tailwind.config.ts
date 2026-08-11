@@ -64,6 +64,10 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "blob-drift": "blob-drift 16s ease-in-out infinite",
@@ -71,6 +75,7 @@ const config: Config = {
         shimmer: "shimmer-sweep 3.5s ease-in-out infinite",
         "fade-up": "fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
         float: "float 5s ease-in-out infinite",
+        marquee: "marquee 32s linear infinite",
       },
     },
   },

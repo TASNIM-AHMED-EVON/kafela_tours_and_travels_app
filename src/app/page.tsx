@@ -5,6 +5,7 @@ import Reveal from "@/components/Reveal";
 import TiltCard from "@/components/TiltCard";
 import LiquidBlobs from "@/components/LiquidBlobs";
 import WhyUsCarousel from "@/components/WhyUsCarousel";
+import LiveUpdatesTicker from "@/components/LiveUpdatesTicker";
 
 const WHY_US = [
   {
@@ -40,7 +41,7 @@ const WHY_US = [
   {
     icon: "fa-solid fa-route",
     title: "সব ধরনের ভ্রমণ, এক জায়গায়",
-    text: "ভর্তি পরীক্ষা থেকে কর্পোরেট ট্যুর — ৬ ধরনের প্যাকেজ নিয়ে আমরা আপনার প্রতিটি ভ্রমণের চাহিদা পূরণ করি।",
+    text: "ভর্তি পরীক্ষা থেকে কর্পোরেট ট্যুর পর্যন্ত — ৬ ধরনের প্যাকেজ নিয়ে আমরা আপনার প্রতিটি ভ্রমণের চাহিদা পূরণ করি।",
     chip: "bg-coral/15 text-coral",
   },
 ];
@@ -111,6 +112,8 @@ export default function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      <LiveUpdatesTicker />
 
       {/* WHY US — first waypoint on the route line, now a 3D draggable carousel. */}
       <section className="pattern-dots relative overflow-hidden bg-navy px-5 py-20">
