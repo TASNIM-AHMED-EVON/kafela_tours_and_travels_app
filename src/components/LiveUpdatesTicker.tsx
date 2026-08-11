@@ -1,19 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCategory } from "@/lib/categories";
 
-function timeAgo(dateStr: string): string {
-  const diffMs = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return "এইমাত্র";
-  if (mins < 60) return `${mins} মিনিট আগে`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} ঘণ্টা আগে`;
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days} দিন আগে`;
-  const months = Math.floor(days / 30);
-  return `${months} মাস আগে`;
-}
-
 /**
  * A live-feeling ticker showing the most recently added packages, pulled
  * directly from Supabase — genuine activity, not decorative fake numbers.
@@ -51,8 +38,6 @@ export default async function LiveUpdatesTicker() {
                 </span>
                 {cat && <i className={`${cat.icon} text-primary`} />}
                 <span className="text-sm font-semibold text-white">{item.title}</span>
-                {cat && <span className="text-xs text-white/40">· {cat.shortLabel}</span>}
-                <span className="text-xs text-white/30">· {timeAgo(item.created_at)}</span>
                 <span className="text-white/15">|</span>
               </div>
             );
