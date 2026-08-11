@@ -12,6 +12,48 @@
 -- alter table public.packages add column if not exists pickup_date date;
 -- alter table public.packages add column if not exists pickup_time time;
 
+-- Adds the homepage banner carousel (admin-managed slideshow between the
+-- header and hero text). Run this if you already set up your database
+-- before this feature existed — requires is_admin() to already exist
+-- (see the SECURITY UPGRADE block below if you haven't run that yet):
+/*
+create table if not exists public.banners (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  link_url text,
+  title text,
+  display_order integer not null default 0,
+  created_at timestamptz not null default now()
+);
+alter table public.banners enable row level security;
+
+drop policy if exists "Public can read banners" on public.banners;
+create policy "Public can read banners" on public.banners for select using (true);
+
+drop policy if exists "Admins can insert banners" on public.banners;
+create policy "Admins can insert banners" on public.banners for insert to authenticated with check (public.is_admin());
+
+drop policy if exists "Admins can update banners" on public.banners;
+create policy "Admins can update banners" on public.banners for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Admins can delete banners" on public.banners;
+create policy "Admins can delete banners" on public.banners for delete to authenticated using (public.is_admin());
+
+insert into storage.buckets (id, name, public) values ('banner-images', 'banner-images', true) on conflict (id) do nothing;
+
+drop policy if exists "Public can view banner images" on storage.objects;
+create policy "Public can view banner images" on storage.objects for select using (bucket_id = 'banner-images');
+
+drop policy if exists "Admins can upload banner images" on storage.objects;
+create policy "Admins can upload banner images" on storage.objects for insert to authenticated with check (bucket_id = 'banner-images' and public.is_admin());
+
+drop policy if exists "Admins can update banner images" on storage.objects;
+create policy "Admins can update banner images" on storage.objects for update to authenticated using (bucket_id = 'banner-images' and public.is_admin());
+
+drop policy if exists "Admins can delete banner images" on storage.objects;
+create policy "Admins can delete banner images" on storage.objects for delete to authenticated using (bucket_id = 'banner-images' and public.is_admin());
+*/
+
 -- SECURITY UPGRADE - run this if your site was set up before this fix.
 -- It locks down write access to only accounts you explicitly approve, instead
 -- of trusting any logged-in Supabase user. See "IMPORTANT SECURITY STEP" near
@@ -225,6 +267,70 @@ create policy "Admins can delete package images"
   to authenticated
   using (bucket_id = 'package-images' and public.is_admin());
 
+-- 5. Homepage banner carousel — an admin-managed slideshow shown between
+--    the header and the hero text (like a "top up center" promo banner).
+create table if not exists public.banners (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  link_url text,
+  title text,
+  display_order integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.banners enable row level security;
+
+drop policy if exists "Public can read banners" on public.banners;
+create policy "Public can read banners"
+  on public.banners for select
+  using (true);
+
+drop policy if exists "Admins can insert banners" on public.banners;
+create policy "Admins can insert banners"
+  on public.banners for insert
+  to authenticated
+  with check (public.is_admin());
+
+drop policy if exists "Admins can update banners" on public.banners;
+create policy "Admins can update banners"
+  on public.banners for update
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists "Admins can delete banners" on public.banners;
+create policy "Admins can delete banners"
+  on public.banners for delete
+  to authenticated
+  using (public.is_admin());
+
+insert into storage.buckets (id, name, public)
+values ('banner-images', 'banner-images', true)
+on conflict (id) do nothing;
+
+drop policy if exists "Public can view banner images" on storage.objects;
+create policy "Public can view banner images"
+  on storage.objects for select
+  using (bucket_id = 'banner-images');
+
+drop policy if exists "Admins can upload banner images" on storage.objects;
+create policy "Admins can upload banner images"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'banner-images' and public.is_admin());
+
+drop policy if exists "Admins can update banner images" on storage.objects;
+create policy "Admins can update banner images"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'banner-images' and public.is_admin());
+
+drop policy if exists "Admins can delete banner images" on storage.objects;
+create policy "Admins can delete banner images"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'banner-images' and public.is_admin());
+
 -- ============================================================================
 -- IMPORTANT SECURITY STEP - do this after running the schema above, and
 -- after creating your admin login under Authentication -> Users:
@@ -238,7 +344,7 @@ create policy "Admins can delete package images"
 -- policies above now require explicit allowlisting.
 -- ============================================================================
 
--- 5. (Optional) seed the admission-search list with the original 26 universities.
+-- 6. (Optional) seed the admission-search list with the original 26 universities.
 -- Uncomment and run if you want to start with the old static list instead of
 -- entering everything by hand in the admin panel.
 /*

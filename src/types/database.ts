@@ -15,3 +15,12 @@ export interface PackageItem {
 }
 
 export type PackageItemInput = Omit<PackageItem, "id" | "created_at">;
+
+export interface BannerItem {
+  id: string;
+  image_url: string;
+  link_url: string | null;
+  title: string | null;
+  display_order: number;
+  created_at: string;
+}

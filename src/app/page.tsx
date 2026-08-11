@@ -6,6 +6,8 @@ import TiltCard from "@/components/TiltCard";
 import LiquidBlobs from "@/components/LiquidBlobs";
 import WhyUsCarousel from "@/components/WhyUsCarousel";
 import LiveUpdatesTicker from "@/components/LiveUpdatesTicker";
+import HeroBannerCarousel from "@/components/HeroBannerCarousel";
+import { createClient } from "@/lib/supabase/server";
 
 const WHY_US = [
   {
@@ -46,13 +48,25 @@ const WHY_US = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("banners")
+    .select("*", { count: "exact", head: true });
+  const hasBanners = (count ?? 0) > 0;
+
   return (
     <>
       <Navbar />
 
+      <HeroBannerCarousel />
+
       {/* HERO — the caravan sets out at dusk, liquid gold light drifting behind it. */}
-      <section className="relative overflow-hidden bg-dusk-sky px-5 pb-32 pt-44 text-center text-white">
+      <section
+        className={`relative overflow-hidden bg-dusk-sky px-5 pb-32 text-center text-white ${
+          hasBanners ? "pt-16" : "pt-44"
+        }`}
+      >
         <LiquidBlobs variant="gold" />
 
         <svg
