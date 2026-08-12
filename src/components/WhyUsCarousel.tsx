@@ -15,6 +15,14 @@ export interface CarouselItem {
  * math (theta, translateZ ring positioning, drag-to-rotate) is ported from
  * a vanilla-JS reference the user provided; restyled here to match the
  * site's navy/gold theme instead of the reference's neon cyberpunk look.
+ *
+ * IMPORTANT: the drag-tracking listeners (mousemove/touchmove) are only
+ * attached to `document` for the duration of an actual drag — attached on
+ * pointer-down, removed on pointer-up. Earlier this attached them for the
+ * whole time the component was mounted (i.e. the whole time someone was on
+ * the home page), which made the touchmove listener non-passive site-wide
+ * and caused normal page scrolling to feel laggy even when nowhere near
+ * the carousel. See handleDown/handleUp below.
  */
 export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -58,19 +66,22 @@ export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
     applyRotation(true);
   }
 
-  function handleDown(clientX: number) {
-    draggingRef.current = true;
-    startXRef.current = clientX;
-  }
-  function handleMove(clientX: number) {
+  // Kept as refs with a stable identity so the listener actually attached
+  // to `document` never needs to change, while always calling through to
+  // this render's latest logic (reassigned below on every render).
+  const handleMoveRef = useRef<(clientX: number) => void>(() => {});
+  const handleUpRef = useRef<(clientX: number) => void>(() => {});
+
+  handleMoveRef.current = (clientX: number) => {
     if (!draggingRef.current || !carouselRef.current) return;
     const diff = clientX - startXRef.current;
     carouselRef.current.style.transition = "none";
     carouselRef.current.style.transform = `translate(-50%, -50%) rotateY(${thetaRef.current + diff * 0.4}deg)`;
-  }
-  function handleUp(clientX: number) {
+  };
+  handleUpRef.current = (clientX: number) => {
     if (!draggingRef.current) return;
     draggingRef.current = false;
+    detachDragListeners();
     const diff = clientX - startXRef.current;
     if (Math.abs(diff) > 20) {
       if (diff > 0) prev();
@@ -79,29 +90,43 @@ export default function WhyUsCarousel({ items }: { items: CarouselItem[] }) {
       thetaRef.current = Math.round(thetaRef.current / angleStep) * angleStep;
       applyRotation(true);
     }
-  }
+  };
 
-  useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX);
-    const onMouseUp = (e: MouseEvent) => handleUp(e.clientX);
-    const onTouchMove = (e: TouchEvent) => {
-      if (draggingRef.current) e.preventDefault();
-      handleMove(e.touches[0].clientX);
-    };
-    const onTouchEnd = (e: TouchEvent) => handleUp(e.changedTouches[0].clientX);
+  // Stable (never-recreated) listener functions — required so
+  // addEventListener/removeEventListener refer to the exact same function.
+  const onMouseMove = useRef((e: MouseEvent) => handleMoveRef.current(e.clientX)).current;
+  const onMouseUp = useRef((e: MouseEvent) => handleUpRef.current(e.clientX)).current;
+  const onTouchMove = useRef((e: TouchEvent) => {
+    if (draggingRef.current) e.preventDefault();
+    handleMoveRef.current(e.touches[0].clientX);
+  }).current;
+  const onTouchEnd = useRef((e: TouchEvent) => handleUpRef.current(e.changedTouches[0].clientX)).current;
 
+  function attachDragListeners() {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("touchmove", onTouchMove, { passive: false });
     document.addEventListener("touchend", onTouchEnd);
-    return () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
-    };
+  }
+  function detachDragListeners() {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+    document.removeEventListener("touchmove", onTouchMove);
+    document.removeEventListener("touchend", onTouchEnd);
+  }
+
+  function handleDown(clientX: number) {
+    draggingRef.current = true;
+    startXRef.current = clientX;
+    attachDragListeners();
+  }
+
+  // Safety net: if the component unmounts mid-drag (e.g. navigating away),
+  // make sure the listeners don't leak.
+  useEffect(() => {
+    return () => detachDragListeners();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dims]);
+  }, []);
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowLeft") next();
