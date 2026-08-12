@@ -14,10 +14,6 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
     setCurrent((i) => (i + 1) % banners.length);
   }, [banners.length]);
 
-  const prev = useCallback(() => {
-    setCurrent((i) => (i - 1 + banners.length) % banners.length);
-  }, [banners.length]);
-
   useEffect(() => {
     if (banners.length <= 1) return;
     timerRef.current = setInterval(() => {
@@ -65,38 +61,19 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
         })}
 
         {banners.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="পূর্ববর্তী ব্যানার"
-              className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/50 text-white backdrop-blur-sm transition hover:border-primary/50 hover:bg-dark/80 hover:text-primary sm:h-11 sm:w-11"
-            >
-              <i className="fa-solid fa-chevron-left" />
-            </button>
-            <button
-              type="button"
-              onClick={next}
-              aria-label="পরবর্তী ব্যানার"
-              className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-dark/50 text-white backdrop-blur-sm transition hover:border-primary/50 hover:bg-dark/80 hover:text-primary sm:h-11 sm:w-11"
-            >
-              <i className="fa-solid fa-chevron-right" />
-            </button>
-
-            <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
-              {banners.map((banner, i) => (
-                <button
-                  key={banner.id}
-                  type="button"
-                  aria-label={`স্লাইড ${i + 1}`}
-                  onClick={() => setCurrent(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === current ? "w-6 bg-primary" : "w-2 bg-white/40 hover:bg-white/60"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
+          <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+            {banners.map((banner, i) => (
+              <button
+                key={banner.id}
+                type="button"
+                aria-label={`স্লাইড ${i + 1}`}
+                onClick={() => setCurrent(i)}
+                className={`h-2 rounded-full transition-all ${
+                  i === current ? "w-6 bg-primary" : "w-2 bg-white/40 hover:bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
